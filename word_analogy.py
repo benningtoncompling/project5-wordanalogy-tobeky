@@ -8,6 +8,8 @@ vector_file = sys.argv[1]
 input_dir = sys.argv[2]
 output_dir = sys.argv[3]
 eval_file = sys.argv[4]
+should_normalize = sys.argv[5]
+similarity_type = sys.argv[6]
 
 word_vectors = {}
 with open(vector_file, 'r') as open_file:
@@ -15,6 +17,9 @@ with open(vector_file, 'r') as open_file:
         word = line.split()[0]
         vector = line.split()[1:]
         word_vectors[word] = numpy.array(vector, dtype=float)
+
+with open(eval_file, 'w') as eval:
+    eval.write("")
 
 
 def word_checker(word):
@@ -28,6 +33,20 @@ def find_e_dist(v1, v2):
     squared_sum = numpy.square(v1 - v2)
     total = numpy.sum(squared_sum)
     return total
+
+
+def normalize(word_vectors):
+    magnitude = 0
+    for i in word_vectors:
+        magnitude += numpy.square(word_vectors[i])
+    sqr_magnitude = numpy.sqrt(magnitude)
+    for i in word_vectors:
+        word_vectors[i] = word_vectors[i]/sqr_magnitude
+    return word_vectors
+
+
+if should_normalize == 1:
+    word_vectors = normalize(word_vectors)
 
 
 for filename in os.listdir(input_dir):
